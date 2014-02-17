@@ -7,7 +7,7 @@ This tutorial walks you through building a game using [Danc's Miraculously Flexi
 Here's a small sample of what the output looks like when you're done.
 ![Screenshot](http://robotocracy.com/img/game_sample.png)
 
-Step 0: Getting started.
+Step 0: Getting started
 -------------------------
 To get all the files you need to be able to run the game, clone this repository to your local machine. Creating a new repo on GitHub to save your game is an exercise left to the reader.
 
@@ -15,7 +15,7 @@ We'll be editing **only** the code in ```game.py```. To run the game type ```pyt
 
 **Read through each section before you type anything and NO COPY/PASTE.**
 
-Step 1: Let's add something to the game.
+Step 1: Let's add something to the game
 ----------------------------------------
 The first thing we're going to do is add boulders to our game. First, we need to _define_ what a boulder is. We create a class definition as follows:
 
