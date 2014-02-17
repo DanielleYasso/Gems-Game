@@ -7,7 +7,13 @@ This tutorial walks you through building a game using [Danc's Miraculously Flexi
 Here's a small sample of what the output looks like when you're done.
 ![Screenshot](http://robotocracy.com/img/game_sample.png)
 
-We'll be editing **only** the code in game.py. After every step, run and experiment with the program to see how each addition changes it.
+Step 0: Getting started.
+-------------------------
+To get all the files you need to be able to run the game, clone this repository to your local machine. Creating a new repo on GitHub to save your game is an exercise left to the reader.
+
+We'll be editing **only** the code in ```game.py```. To run the game type ```python engine.py``` at the command line. After every step, run and experiment with the program to see how each addition changes it.
+
+**Read through each section before you type anything and NO COPY/PASTE.**
 
 Step 1: Let's add something to the game.
 ----------------------------------------
@@ -408,7 +414,7 @@ Experiment with adding different gems that have different interaction behaviors.
 
 Step 14: Get Clever, Have Fun
 -----------------------------
-Congratulations, you have a game. Sort of. It's not all that interesting, and it definitely could be better. You can spend some time looking at engine.py to see how it all works (be careful, there be dragons down there).
+Congratulations, you have a game. Sort of. It's not all that interesting, and it definitely could be better. You can spend some time looking at engine.py to see how it all works (be careful, there be dragons down there). You *might* even need to edit engine.py in order to do some of the fancier things you want to do. Be careful and test as you go!
 
 More interestingly, spend some time playing with object interactions, adding more objects and classes to your game, and fixing some bugs. Here are some ideas:
 
