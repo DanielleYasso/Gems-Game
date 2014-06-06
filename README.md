@@ -2,10 +2,10 @@ Object Oriented Programming
 ===========================
 This game requires python2.6 or greater and pyglet 1.2alpha, as of the time of writing.
 
-This tutorial walks you through building a game using [Danc's Miraculously Flexible Game Prototyping Graphics for Small Worlds](http://www.lostgarden.com/2009/03/dancs-miraculously-flexible-game.html). We've built a (relatively brittle) game engine on top of the [Pyglet game library](http://www.pyglet.org/), a small OpenGL-based game library for python.
+This tutorial walks you through building a game using [Danc's Miraculously Flexible Game Prototyping Graphics for Small Worlds](http://www.lostgarden.com/2007/05/dancs-miraculously-flexible-game.html). We've built a (relatively brittle) game engine on top of the [Pyglet game library](http://www.pyglet.org/), a small OpenGL-based game library for python.
 
 Here's a small sample of what the output looks like when you're done.
-![Screenshot](http://robotocracy.com/img/game_sample.png)
+![Screenshot](http://i.imgur.com/M1cV3eT.jpg)
 
 Step 0: Getting started
 -------------------------
