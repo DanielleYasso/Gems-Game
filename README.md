@@ -451,5 +451,8 @@ Here's a list of all the sprites (game images) that the game engine understands.
 
 Mostly, be clever with this and have fun! Classes, woo.
 
+### Holy wow, this is so awesome, I want to work on it at home!!
+Ok, but beware ... it (may or may not be) straightforward. [Here's some tips for getting it set up on Mac OSX.](https://github.com/hackbrightacademy/oop_lesson/wiki)
+
 ### Licensing
 The material presented here is copyrighted by Hackbright Academy, and is part of our fellowship program curriculum. It is currently free for personal use.
