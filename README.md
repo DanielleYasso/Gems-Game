@@ -493,6 +493,9 @@ Here's a list of all the sprites (game images) that the game engine understands.
 
 Mostly, be clever with this and have fun! Classes, woo.
 
+### Ok, these ideas sound cool, but I'm still a little stuck...
+Ok, have some [hints](HINTS.md).
+
 ### Holy wow, this is so awesome, I want to work on it at home!!
 Ok, but beware ... it (may or may not be) straightforward. [Here's some tips for getting it set up on Mac OSX.](https://github.com/hackbrightacademy/oop_lesson/wiki)
 
