@@ -34,6 +34,7 @@ class Board(object):
 
         self.update_list   = []
         self.content_layer = []
+        self.game_map      = []
         self.bg_sprites    = []
 
     # Draw the game board
@@ -58,16 +59,23 @@ class Board(object):
         # Label to hold message text at the top of the screen
         self.message = pyglet.text.Label(text = "", x=10, y=self.SCREEN_HEIGHT-30)
 
+        # Actually draw the background sprites on the screen
+        self.draw_game_map()
+
+
+    # Draw the sprites for the game_map background tiles
+    def draw_game_map(self):
         self.bg_sprites = []
 
         for y in range(self.height):
             for x in range(self.width):
-                img_idx = game_map[y][x]
+                img_idx = self.base_board[y][x]
                 image = self.IMAGES[img_idx]
 
                 sprite = pyglet.sprite.Sprite(image)
                 self.draw_bg(sprite, x, y)
                 self.bg_sprites.append(sprite)
+
 
 
     # Change the text message at the top of the game screen

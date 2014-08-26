@@ -21,12 +21,15 @@ IMAGES = {}
 TILE_WIDTH = 0
 TILE_HEIGHT = 0
 
+# Setup mapping of images to be used in game
 def setup_images():
     filenames = {
             "Wall": "Wall Block.png",
             "Block": "Plain Block.png",
             "GrassBlock": "Grass Block.png",
             "StoneBlock": "Stone Block.png",
+            "WaterBlock": "Water Block.png",
+            "WoodBlock": "Wood Block.png",
             "ShortTree": "Tree Short.png",
             "TallTree": "Tree Tall.png",
             "Rock": "Rock.png",
@@ -56,14 +59,13 @@ def setup_images():
     TILE_HEIGHT = i.height
 
 
-
-
+# Called by clock to notify game elements of an update cycle
 def update(dt):
-    for el in update_list:
-        el.update(dt)
+    if game.GAME_BOARD:
+        for el in game.GAME_BOARD.update_list:
+            el.update(dt)
 
 draw_list = []
-update_list = []
 
 @game_window.event
 def on_draw():
@@ -80,10 +82,12 @@ def on_key_press(symbol, modifiers):
         for item in game.GAME_BOARD.update_list:
             item.keyboard_handler(symbol, modifiers)
 
+# Start the main game loop
 def run():
-    # Attempt to use custom board 
-    # global board
+    # Setup the images
     setup_images()
+
+    # Create the game board
     try:
         board = Board(width=game.GAME_WIDTH, 
                       height=game.GAME_HEIGHT,
@@ -117,11 +121,6 @@ def run():
     game.initialize()
     pyglet.app.run()
 
-class UpdateWrapper(object):
-    def __init__(self, fn):
-        self.fn = fn
-    def update(self, dt):
-        self.fn()
 
 if __name__ == "__main__":
     run()

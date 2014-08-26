@@ -1,3 +1,5 @@
+import pyglet
+
 class GameElement(object):
     IMAGE = "StoneBlock"
     SOLID = False
@@ -20,3 +22,10 @@ class GameElement(object):
     def keyboard_handler(self, symbol, modifier):
         pass
 
+    # Change the sprite displayed for this game element
+    def change_image(self, new_image):
+        self.IMAGE = new_image
+
+        if self.board:
+            image_file = self.board.IMAGES[self.IMAGE]
+            self.sprite = pyglet.sprite.Sprite(image_file)

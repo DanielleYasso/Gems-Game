@@ -51,7 +51,6 @@ class Character(GameElement):
         return None
 
     def keyboard_handler(self, symbol, modifier):
-        print "pressed", symbol, modifier
         direction = None
         if symbol == key.UP:
             direction = "up"
