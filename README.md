@@ -1,10 +1,10 @@
 Object Oriented Programming
 ===========================
-This game requires python2.6 or greater and pyglet 1.2alpha, as of the time of writing.
+This game requires python2.6 or greater and pyglet 1.1.4, as of the time of writing.
 
 This tutorial walks you through building a game using [Danc's Miraculously Flexible Game Prototyping Graphics for Small Worlds](http://www.lostgarden.com/2007/05/dancs-miraculously-flexible-game.html). We've built a (relatively brittle) game engine on top of the [Pyglet game library](http://www.pyglet.org/), a small OpenGL-based game library for python.
 
-Here's a small sample of what the output looks like when you're done.
+Here's a small sample of what the output could look like when you're done.
 
 ![Screenshot](http://i.imgur.com/M1cV3eT.jpg)
 
@@ -33,7 +33,7 @@ The next thing we need to do is to actually create a single rock and place it on
 
 Simply calling the class as if it were a function creates a new rock for us to use. Here, we assign it to the variable 'rock'.
 
-As a quirk of this particular game enginer we've written, we have to register this rock with the game board so that it displays. We do that by calling GAME\_BOARD.register(). After that, the rock can then be placed on the board with the GAME\_BOARD.set\_el() method. For the purposes of this exercise, when we place objects on our game board, we put the code in the initialize() function. The full code for that looks like this. 
+As a quirk of this particular game engine we've written, we have to register this rock with the game board so that it displays. We do that by calling GAME\_BOARD.register(). After that, the rock can then be placed on the board with the GAME\_BOARD.set\_el() method. For the purposes of this exercise, when we place objects on our game board, we put the code in the initialize() function. The full code for that looks like this. 
 
 **DO NOT COPY/PASTE PLZ**
 
@@ -144,26 +144,28 @@ Note at the end, we print each individual rock out of the list. Try playing arou
 
 Step 5: Adding a Character class
 -----------------------------
-Rocks are pretty cool, but this game would be way better if we had something else on the board besides rocks. We're going to add a Character class to our game. We will use this as a base for our player representation in the game (our Player Character, or PC). This class will only be instantiated once, as we only have one player. Later, you might add other game characters that aren't controlled by the player (Non-Player Characters, NPCs). Since we're going to be interacting with the player from many places, we're going to save a reference to our player in the global PLAYER variable.
+Rocks are pretty cool, but this game would be way better if we had something else on the board besides rocks. We're going to add a Character class to our game. We will use this as a base for our player representation in the game (our Player Character, or PC). This class will only be instantiated (created) once, as we only have one player. Later, you might add other game characters that aren't controlled by the player (Non-Player Characters, NPCs).
+
+Once placed on the board, our player object (or really any object we place on the board) will have it's own "life".  That means it will be responsible for responding to events that happen in the world (the game board), how it moves, how it interacts with other objects, how it dies.  One of the advantages of Object Oriented Programming is this idea that each object is responsible for itself.  If you want the object to move, you place the code to handle the movement on the object's class.  We'll explore that idea more as we go on, but lets start by making our Character.
 
 The class definition for Characters look like this:
 
     class Character(GameElement):
         IMAGE = "Girl"
 
-Note again that it is derived from a GameElement, and it has a class attribute called IMAGE that has the value "Girl". This tells the game engine to use the 'Girl' image.
+Note again that just like our Rock, it is derived from a GameElement.  It has a class attribute called IMAGE that has the value "Girl". This tells the game engine to use the 'Girl' image.
 
 Register it in your initialize function after you register your rocks. Place it at position (2,2).
 
     # In the initialize() function
-    global PLAYER
-    PLAYER = Character()
-    GAME_BOARD.register(PLAYER)
-    GAME_BOARD.set_el(2, 2, PLAYER)
-    print PLAYER
+    player = Character()
+    GAME_BOARD.register(player)
+    GAME_BOARD.set_el(2, 2, player)
+    print player
 
 There are a few other images which we can use for our player character. Try one of the following:
     "Boy", "Cat", "Princess", "Horns"
+
 
 Step 6: And now a message from our sponsors
 -------------------------------------------
@@ -175,24 +177,37 @@ There's also a related function, GAME\_BOARD.erase\_msg().
 
 Step 7: Keyboard interaction
 ----------------------------
+So now we have a Rock and a Character that are both themselves GameElements (that is to say, they inherit from the GameElement class).  But what does this mean?  Why not just make everything a GameElement?
+
+Our game Board knows how to draw GameElements, so anything that is a GameElement can be displayed on our Board.  Our Rock is just a GameElement with a default IMAGE specified, but we could have achived the same effect by doing something like this:
+
+    # Don't actually write this
+    rock = GameElement()
+    rock.IMAGE = "Rock"
+    GAME_BOARD.register(rock)
+    GAME_BOARD.set_el(1, 2, rock)
+
+But now we want to create our Character.  Our Character is a "smarter" GameElement.  It can move.  A Rock can't move, so no sense in putting that code in the Rock class.  It also doesn't make sense to put that code in the GameElement class, since not every object on our board can move.  Also, what does it mean to move?  In this case, our character is going to move one space when an arrow key is pressed.  Our Character will know what it means to move so our code to handle the movement should be placed in our Character class.
+
 Now it's time to make our game interactive by adding keyboard capabilities.
 
 The thing to note about they keyboard here is that we can no longer use the raw\_input function we've been using until now. When building a game, we can't expect our user to hit enter every time they press a key. Instead, we read the _state_ of the keyboard directly.
 
-Up until now, we've thought of the keyboard as a source of input that feeds us characters one at a time in a stream. Another way to think of the keyboard is as a giant bundle of buttons that are either active or not.
+Up until now, we've thought of the keyboard as a source of input that feeds us characters one at a time in a stream. Another way to think of the keyboard is as an "event" that occurs when a key is pressed.
 
-Our game engine activates the keyboard in this second manner, and makes it available to you as a giant dictionary with an entry for each key. You can access the state of each key like so:
+Our game engine activates the keyboard in this second manner, and we just need to write the code that needs to run when that event happens (instead of constantly checking to see if a key has been pressed).
 
-    # This will return True if the up arrow key is being pressed
-    KEYBOARD[key.UP]
+Because our game engine spends a lot of time dealing with graphics, we have to give it control of our main loop. Otherwise, we'd have to draw everything ourselves.  Any object that is on our board can be made aware that an event (like a key being pressed) has happened, but only objects that actually care about that event need to have a handler.
 
-Because our game engine spends a lot of time dealing with graphics, we have to give it control of our main loop. Otherwise, we'd have to draw everything ourselves. Instead, our main loop has a hook to call a function of our choice every time it runs. In this case, it's set up to call our keyboard handler which we will use to interact with everything. To take advantage of this, create a function called keyboard\_handler that looks like this:
+Inside our Character class, create a function called keyboard\_handler.  This function will be called by the Board every time a key is pressed:
 
-    def keyboard_handler():
-        if KEYBOARD[key.UP]:
-            GAME_BOARD.draw_msg("You pressed up")
-        elif KEYBOARD[key.SPACE]:
+    def keyboard_handler(self, symbol, modifier):
+        if symbol == key.UP:
+            GAME_BOARD.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
+        elif symbol == key.SPACE:
             GAME_BOARD.erase_msg()
+
+The ```symbol``` argument is the character code of the key that was pressed.  The ```key``` module contains friendly mappings of those codes to the symbol numbers.  (It's much nicer to write ```if symbol == key.UP:``` instead of ```if symbol == 65362:```).  Modifier lets you know if a modifier key (Shift, Ctrl, Alt) was also pressed at the same time at the same time.
 
 Try adding a message for each direction key on the keyboard, ie: down, left, right.
 
@@ -204,12 +219,12 @@ When we want to move up, our character's 'y' position decreases by 1. If it move
 
 The implementation looks like this:
 
-    def keyboard_handler():
-        if KEYBOARD[key.UP]:
-            GAME_BOARD.draw_msg("You pressed up")
-            next_y = PLAYER.y - 1
-            GAME_BOARD.del_el(PLAYER.x, PLAYER.y)
-            GAME_BOARD.set_el(PLAYER.x, next_y, PLAYER)
+    def keyboard_handler(self, symbol, modifier):
+        if symbol == key.UP:
+            GAME_BOARD.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
+            next_y = self.y - 1
+            GAME_BOARD.del_el(self.x, self.y)
+            GAME_BOARD.set_el(self.x, next_y, self)
 
 Add conditions for every direction.
 
@@ -217,11 +232,11 @@ Step 9: Instance methods
 ------------------------
 We're going to simplify things by adding behavior to our character object. In theory, our Character class 'encapsulates' the behavior and data related to characters in our game. In this example, our character knows its own 'x' and 'y' position. Similarly, if we ask it to move in a direction, it should also know what its new position is.
 
-    print (PLAYER.x, PLAYER.y)
+    print (player.x, player.y)
     => (1, 1)
-    print PLAYER.next_pos("up")
+    print player.next_pos("up")
     => (1, 0)
-    print (PLAYER.x, PLAYER.y)
+    print (player.x, player.y)
     => (1, 1)
 
 Note that finding out what the next position is does not actually move the player we do that manually.
@@ -247,54 +262,71 @@ Note the unusual parameter 'self' that seems to disappear when we call it:
 
     # but when we call it later:
 
-    PLAYER.next_pos("up")
+    player.next_pos("up")
 
 An instance method can be thought of as being _inside_ a particular instance. From inside that instance, the method needs a variable to refer to the instance it's inside of, thus the 'self' parameter.
 
 Update your keyboard handler to use the new .next\_pos() method. We first decide which direction the player is trying to move by checking the keyboard with a big if statement
 
-    if KEYBOARD[key.UP]:
+    direction = None
+    if symbol == key.UP:
         direction = "up"
-    if KEYBOARD[key.DOWN]:
+    elif symbol == key.DOWN:
         direction = "down"
-    if KEYBOARD[key.LEFT]:
+    elif symbol == key.LEFT:
         direction = "left"
-    if KEYBOARD[key.RIGHT]:
+    elif symbol == key.RIGHT:
         direction = "right"
 
 Then we feed the direction to next\_pos to find out the location the player is trying to move to.
 
     if direction:
-        next_location = PLAYER.next_pos(direction)
+        next_location = self.next_pos(direction)
         next_x = next_location[0]
         next_y = next_location[1]
 
 Lastly, we move the player to the new location by deleting them from their old position and re-setting them in their new position:
 
-    GAME_BOARD.del_el(PLAYER.x, PLAYER.y)
-    GAME_BOARD.set_el(next_x, next_y, PLAYER)
+    GAME_BOARD.del_el(self.x, self.y)
+    GAME_BOARD.set_el(next_x, next_y, self)
 
 All together, it looks like this:
 
-    def keyboard_handler():
-        direction = None
+    class Character(GameElement):
+        IMAGE = "Girl"
 
-        if KEYBOARD[key.UP]:
-            direction = "up"
-        if KEYBOARD[key.DOWN]:
-            direction = "down"
-        if KEYBOARD[key.LEFT]:
-            direction = "left"
-        if KEYBOARD[key.RIGHT]:
-            direction = "right"
+        def next_pos(self, direction):
+            if direction == "up":
+                return (self.x, self.y-1)
+            elif direction == "down":
+                return (self.x, self.y+1)
+            elif direction == "left":
+                return (self.x-1, self.y)
+            elif direction == "right":
+                return (self.x+1, self.y)
+            return None
 
-        if direction:
-            next_location = PLAYER.next_pos(direction)
-            next_x = next_location[0]
-            next_y = next_location[1]
+        def keyboard_handler(self, symbol, modifier):
+            print "[%s] pressed %s" %(self.IMAGE, symbol)
 
-            GAME_BOARD.del_el(PLAYER.x, PLAYER.y)
-            GAME_BOARD.set_el(next_x, next_y, PLAYER)
+            direction = None
+            if symbol == key.UP:
+                direction = "up"
+            elif symbol == key.DOWN:
+                direction = "down"
+            elif symbol == key.LEFT:
+                direction = "left"
+            elif symbol == key.RIGHT:
+                direction = "right"
+
+            if direction:
+                next_location = self.next_pos(direction)
+
+                if next_location:
+                    next_x = next_location[0]
+                    next_y = next_location[1]
+                    GAME_BOARD.del_el(self.x, self.y)
+                    GAME_BOARD.set_el(next_x, next_y, self)
 
 Run the program and see how these changes affect the game.
 
@@ -305,11 +337,13 @@ Whoah, we just walked through that boulder. Not only that, but we _ate_ it, as w
 The first thing to do is look before we move. This means, after determining our next position, checking the board to see if there's anything already there. We can use the .get\_el method on our board. In our keyboard\_handler method:
 
     if direction:
-        next_location = PLAYER.next_pos(direction)
-        next_x = next_location[0]
-        next_y = next_location[1]
-    
-        existing_el = GAME_BOARD.get_el(next_x, next_y)
+        next_location = self.next_pos(direction)
+        if next_location:
+            next_x = next_location[0]
+            next_y = next_location[1]
+
+            existing_el = GAME_BOARD.get_el(next_x, next_y)
+
 
 Now, we could just see if the existing\_el is an object of type Rock by using the isinstance() function. But what if there are other things that aren't rocks that we don't want to walk through? We need a more general way to do this.
 
@@ -323,23 +357,29 @@ Now, every instance of Rock will have the attribute 'SOLID' set to true. Interes
 
 Instead of checking whether or not the existing element we're about to walk over is a rock, we can just check whether or not it's solid:
 
-    if existing_el is None or not existing_el.SOLID:
-        # If there's nothing there _or_ if the existing element is not solid, walk through
-        GAME_BOARD.del_el(PLAYER.x, PLAYER.y)
-        GAME_BOARD.set_el(next_x, next_y, PLAYER)
+    if existing_el and existing_el.SOLID:
+        GAME_BOARD.draw_msg("There's something in my way!")
+    elif existing_el is None or not existing_el.SOLID:
+        GAME_BOARD.erase_msg()
+        GAME_BOARD.del_el(self.x, self.y)
+        GAME_BOARD.set_el(next_x, next_y, self)
 
 All together:
 
     if direction:
-        next_location = PLAYER.next_pos(direction)
-        next_x = next_location[0]
-        next_y = next_location[1]
-    
-        existing_el = GAME_BOARD.get_el(next_x, next_y)
+        next_location = self.next_pos(direction)
+        if next_location:
+            next_x = next_location[0]
+            next_y = next_location[1]
 
-        if existing_el is None or not existing_el.SOLID:
-            GAME_BOARD.del_el(PLAYER.x, PLAYER.y)
-            GAME_BOARD.set_el(next_x, next_y, PLAYER)
+            existing_el = GAME_BOARD.get_el(next_x, next_y)
+
+            if existing_el and existing_el.SOLID:
+                GAME_BOARD.draw_msg("There's something in my way!")
+            elif existing_el is None or not existing_el.SOLID:
+                GAME_BOARD.erase_msg()
+                GAME_BOARD.del_el(self.x, self.y)
+                GAME_BOARD.set_el(next_x, next_y, self)
 
 
 Step 11: It's a trap!
@@ -382,6 +422,8 @@ When we walk over our gem, it simply disappears. We need a way to remember that 
 
 To do this, we need to add an initializer to say that when we create a Character, it starts with an empty inventory. Our inventory can be a simple list of objects our character is carrying.
 
+In the Character class, add:
+
     def __init__(self):
         GameElement.__init__(self)
         self.inventory = []
@@ -390,15 +432,15 @@ This is an initializer. It "sets up" our object with initial values. Here, we're
 
 Notice the line, 'GameElement.\_\_init\_\_(self)'. To be a proper game element, there was some behavior defined on the GameElement class to interact with the board correctly. When we add an initializer to our class, we need to tell our class that it still needs to do those things, so we call the parent class' initializer.
 
-Next, we need a way for our player to 'interact' with an object. In fact, we want the player to interact with pretty much every object on the board. Most of the time, the interactions won'tproduce anything, but we do it anyway. In the keyboard\_handler:
+Next, we need a way for our player to 'interact' with an object. In fact, we want the player to interact with pretty much every object on the board. Most of the time, the interactions won't produce anything, but we do it anyway. In the keyboard\_handler:
 
     existing_el = GAME_BOARD.get_el(next_x, next_y)
     # Add after this line
 
     if existing_el:
-        existing_el.interact(PLAYER)
+        existing_el.interact(self)
 
-Now, whenever the player tries to bump into an object, it will try to interact with our character first. The default behavior for interaction is to do nothing. This is defined on the GameElement class. We want to override the behavior when a player interacts with a Gem. We want that gem to be added to the player's inventory. It will take the following format:
+Now, whenever the player tries to bump into an object, our character will try to interact with it first. The default behavior for interaction is to do nothing. This is defined on the GameElement class. We want to override the behavior when a player interacts with a Gem. We want that gem to be added to the player's inventory. It will take the following format:
 
     player.inventory.append(gem)
 

@@ -16,3 +16,7 @@ class GameElement(object):
 
     def update(self, dt):
         pass
+
+    def keyboard_handler(self, symbol, modifier):
+        pass
+

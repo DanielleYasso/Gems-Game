@@ -7,8 +7,6 @@ import sys
 #### DO NOT TOUCH ####
 GAME_BOARD = None
 DEBUG = False
-KEYBOARD = None
-PLAYER = None
 ######################
 
 GAME_WIDTH = 3

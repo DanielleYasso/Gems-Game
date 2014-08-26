@@ -7,16 +7,22 @@ import sys
 #### DO NOT TOUCH ####
 GAME_BOARD = None
 DEBUG = False
-KEYBOARD = None
-PLAYER = None
 ######################
 
 GAME_WIDTH = 5
 GAME_HEIGHT = 5
 
+#### Put class definitions here ####
+
 class Rock(GameElement):
     IMAGE = "Rock"
     SOLID = True
+
+    def interact(self, player):
+        if self.SOLID:
+            return "I am a rock, I am an island."
+        else:
+            return "Whoa!  You found the secret rock!"
 
 class Gem(GameElement):
     IMAGE = "BlueGem"
@@ -24,10 +30,10 @@ class Gem(GameElement):
 
     def interact(self, player):
         player.inventory.append(self)
-        GAME_BOARD.draw_msg("You just acquired a gem!")
+        return "You just acquired a gem!  You have %d items." % len(player.inventory)
 
 class Character(GameElement):
-    IMAGE = "Cat"
+    IMAGE = "Boy"
 
     def __init__(self):
         GameElement.__init__(self)
@@ -44,60 +50,67 @@ class Character(GameElement):
             return (self.x+1, self.y)
         return None
 
-def keyboard_handler():
-    direction = None
+    def keyboard_handler(self, symbol, modifier):
+        print "pressed", symbol, modifier
+        direction = None
+        if symbol == key.UP:
+            direction = "up"
+        elif symbol == key.DOWN:
+            direction = "down"
+        elif symbol == key.LEFT:
+            direction = "left"
+        elif symbol == key.RIGHT:
+            direction = "right"
 
-    if KEYBOARD[key.UP]:
-        direction = "up"
-    if KEYBOARD[key.DOWN]:
-        direction = "down"
-    if KEYBOARD[key.LEFT]:
-        direction = "left"
-    if KEYBOARD[key.RIGHT]:
-        direction = "right"
+        if direction:
+            next_location = self.next_pos(direction)
+            if next_location:
+                next_x = next_location[0]
+                next_y = next_location[1]
 
-    if direction:
-        next_location = PLAYER.next_pos(direction)
-        next_x = next_location[0]
-        next_y = next_location[1]
-    
-        existing_el = GAME_BOARD.get_el(next_x, next_y)
-        if existing_el:
-            existing_el.interact(PLAYER)
+                existing_el = GAME_BOARD.get_el(next_x, next_y)
 
-        if existing_el is None or not existing_el.SOLID:
-            GAME_BOARD.del_el(PLAYER.x, PLAYER.y)
-            GAME_BOARD.set_el(next_x, next_y, PLAYER)
+                message = ""
+                if existing_el:
+                    message = existing_el.interact(self)
+
+                if message:
+                    GAME_BOARD.draw_msg(message)
+                else:
+                    GAME_BOARD.erase_msg()
+
+                if existing_el is None or not existing_el.SOLID:
+                    GAME_BOARD.del_el(self.x, self.y)
+                    GAME_BOARD.set_el(next_x, next_y, self)
+
+pass
+####   End class definitions    ####
 
 def initialize():
     """Put game initialization code here"""
-    rock_positions = [
-            (2, 1),
-            (1, 2),
-            (3, 2),
-            (2, 3),
-        ]
 
+    rock_positions = [
+        (2, 1), (1, 2), (3, 2), (2, 3)
+    ]
     rocks = []
+
     for pos in rock_positions:
         rock = Rock()
         GAME_BOARD.register(rock)
         GAME_BOARD.set_el(pos[0], pos[1], rock)
         rocks.append(rock)
 
+    # Make one of the rocks not solid
     rocks[-1].SOLID = False
 
-    for rock in rocks:
-        print rock
-
-    global PLAYER
-    PLAYER = Character()
-    GAME_BOARD.register(PLAYER)
-    GAME_BOARD.set_el(2, 2, PLAYER)
-    print PLAYER
-
-    GAME_BOARD.draw_msg("This game is wicked awesome.") 
     gem = Gem()
     GAME_BOARD.register(gem)
     GAME_BOARD.set_el(3, 1, gem)
 
+    player = Character()
+    GAME_BOARD.register(player)
+    GAME_BOARD.set_el(2, 2, player)
+
+    GAME_BOARD.draw_msg("This game is wicked awesome.") 
+
+    pass
