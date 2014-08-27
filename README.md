@@ -33,7 +33,7 @@ The next thing we need to do is to actually create a single rock and place it on
 
 Simply calling the class as if it were a function creates a new rock for us to use. Here, we assign it to the variable 'rock'.
 
-As a quirk of this particular game engine we've written, we have to register this rock with the game board so that it displays. We do that by calling ```GAME_BOARD.register()```. After that, the rock can then be placed on the board with the ```GAME_BOARD.set\_el()``` method. For the purposes of this exercise, when we place objects on our game board, we put the code in the ```initialize()``` function. The full code for that looks like this. 
+As a quirk of this particular game engine we've written, we have to register this rock with the game board so that it displays. We do that by calling ```GAME_BOARD.register()```. After that, the rock can then be placed on the board with the ```GAME_BOARD.set_el()``` method. For the purposes of this exercise, when we place objects on our game board, we put the code in the ```initialize()``` function. The full code for that looks like this. 
 
 **DO NOT COPY/PASTE PLZ**
 
@@ -50,11 +50,11 @@ Try changing the position and see how the rock moves around. Notice the ouput of
 
 Step 2: Increase the board size
 -------------------------------
-We need a little more room to do something interesting with our game. Let's increase the board size to a 4x4 grid. We do this by updating the GAME\_WIDTH and GAME\_HEIGHT variables. The top left is still 0,0, but the bottom right is now 3,3.
+We need a little more room to do something interesting with our game. Let's increase the board size to a 4x4 grid. We do this by updating the ```GAME_WIDTH``` and ```GAME_HEIGHT``` variables. The top left is still 0,0, but the bottom right is now 3,3.
 
 Step 3: Put more stuff on the board
 -----------------------------------
-Let's look at how to add a couple more boulders to the game. Each rock needs to be registered and set on the GAME\_BOARD independently. Each rock also needs its own variable. Change your initialize function to look like the following.
+Let's look at how to add a couple more boulders to the game. Each rock needs to be registered and set on the ```GAME_BOARD``` independently. Each rock also needs its own variable. Change your initialize function to look like the following.
 
 **>:[ SRSLY NO COPY/PASTE**
 
@@ -84,7 +84,7 @@ Again, class attributes are shared between all instances of the class. If we had
 
 Step 4: More expansion
 ----------------------
-We're going to expand the game board to 5x5, once again by modifying the GAME\_WIDTH and GAME\_HEIGHT variables.
+We're going to expand the game board to 5x5, once again by modifying the ```GAME_WIDTH``` and ```GAME_HEIGHT``` variables.
 
     GAME_WIDTH = 5
     GAME_HEIGHT = 5
@@ -111,7 +111,7 @@ This time, instead of making four separate variables for each rock, we're going 
         ]
     rocks = []
 
-Then, we're going to loop through our list of positions, and for each position, we'll create and register a new rock object with our GAME\_BOARD.
+Then, we're going to loop through our list of positions, and for each position, we'll create and register a new rock object with our ```GAME_BOARD```.
 
     for pos in rock_positions:
         rock = Rock()
@@ -119,7 +119,7 @@ Then, we're going to loop through our list of positions, and for each position, 
         GAME_BOARD.set_el(pos[0], pos[1], rock)
         rocks.append(rock)
 
-Put all together, our initialize function looks like this:
+Put all together, our ```initialize``` function looks like this:
 
     def initialize():
         """Put game initialization code here"""
@@ -144,7 +144,7 @@ Note at the end, we print each individual rock out of the list. Try playing arou
 
 Step 5: Adding a Character class
 -----------------------------
-Rocks are pretty cool, but this game would be way better if we had something else on the board besides rocks. We're going to add a Character class to our game. We will use this as a base for our player representation in the game (our Player Character, or PC). This class will only be instantiated (created) once, as we only have one player. Later, you might add other game characters that aren't controlled by the player (Non-Player Characters, NPCs).
+Rocks are pretty cool, but this game would be way better if we had something else on the board besides rocks. We're going to add a ```Character``` class to our game. We will use this as a base for our player representation in the game (our Player Character, or PC). This class will only be instantiated (created) once, as we only have one player. Later, you might add other game characters that aren't controlled by the player (Non-Player Characters, NPCs).
 
 Once placed on the board, our player object (or really any object we place on the board) will have it's own "life".  That means it will be responsible for responding to events that happen in the world (the game board), how it moves, how it interacts with other objects, how it dies.  One of the advantages of Object Oriented Programming is this idea that each object is responsible for itself.  If you want the object to move, you place the code to handle the movement on the object's class.  We'll explore that idea more as we go on, but lets start by making our Character.
 
@@ -153,9 +153,9 @@ The class definition for Characters look like this:
     class Character(GameElement):
         IMAGE = "Girl"
 
-Note again that just like our Rock, it is derived from a GameElement.  It has a class attribute called IMAGE that has the value "Girl". This tells the game engine to use the 'Girl' image.
+Note again that just like our ```Rock```, it is derived from a ```GameElement```.  It has a class attribute called ```IMAGE``` that has the value "Girl". This tells the game engine to use the 'Girl' image.
 
-Register it in your initialize function after you register your rocks. Place it at position (2,2).
+Register it in your ```initialize``` function after you register your rocks. Place it at position (2,2).
 
     # In the initialize() function
     player = Character()
@@ -169,17 +169,17 @@ There are a few other images which we can use for our player character. Try one 
 
 Step 6: And now a message from our sponsors
 -------------------------------------------
-We need a way to display a message on the screen. Fortunately, you don't have to figure that out, we've added one for your. Add the following line at the end of your initialize function.
+We need a way to display a message on the screen. Fortunately, you don't have to figure that out, we've added one for your. Add the following line at the end of your ```initialize``` function.
 
     GAME_BOARD.draw_msg("This game is wicked awesome.")
 
-There's also a related function, GAME\_BOARD.erase\_msg().
+There's also a related function, ```GAME_BOARD.erase_msg()```.
 
 Step 7: Keyboard interaction
 ----------------------------
-So now we have a Rock and a Character that are both themselves GameElements (that is to say, they inherit from the GameElement class).  But what does this mean?  Why not just make everything a GameElement?
+So now we have a ```Rock``` and a ```Character``` that are both themselves ```GameElements``` (that is to say, they inherit from the ```GameElement``` class).  But what does this mean?  Why not just make everything a ```GameElement```?
 
-Our game Board knows how to draw GameElements, so anything that is a GameElement can be displayed on our Board.  Our Rock is just a GameElement with a default IMAGE specified, but we could have achived the same effect by doing something like this:
+Our game ```Board``` knows how to draw ```GameElements```, so anything that is a ```GameElement``` can be displayed on our ```Board```.  Our ```Rock``` is just a ```GameElement``` with a default ```IMAGE``` specified, but we could have achived the same effect by doing something like this:
 
     # Don't actually write this
     rock = GameElement()
@@ -187,7 +187,7 @@ Our game Board knows how to draw GameElements, so anything that is a GameElement
     GAME_BOARD.register(rock)
     GAME_BOARD.set_el(1, 2, rock)
 
-But now we want to create our Character.  Our Character is a "smarter" GameElement.  It can move.  A Rock can't move, so no sense in putting code to handle movement in the Rock class.  It also doesn't make sense to put that code in the GameElement class, since not every object on our board can move.  Also, what does it mean to move?  For our character it means move one space when an arrow key is pressed.  Maybe we'll want different types of characters, maybe some that can move two spaces.  Our Character will know what it means to move so our code to handle movement should be placed in our ```Character``` class.
+But now we want to create our ```Character```.  Our ```Character``` is a "smarter" ```GameElement```.  It can move.  A ```Rock``` can't move, so no sense in putting code to handle movement in the ```Rock``` class.  It also doesn't make sense to put that code in the ```GameElement``` class, since not every object on our board can move.  Also, what does it mean to move?  For our character it means move one space when an arrow key is pressed.  Maybe we'll want different types of characters, maybe some that can move two spaces.  Our Character will know what it means to move so our code to handle movement should be placed in our ```Character``` class.
 
 Now it's time to make our game interactive by adding keyboard capabilities.
 
@@ -199,7 +199,7 @@ Our game engine activates the keyboard in this second manner, and we just need t
 
 Because our game engine spends a lot of time dealing with graphics, we have to give it control of our main loop. Otherwise, we'd have to draw everything ourselves.  Any object that is on our board can be made aware that an event (like a key being pressed) has happened, but only objects that actually care about that event need to have a handler.
 
-Inside our Character class, create a function called ```keyboard_handler```.  This function will be called by the Board every time a key is pressed:
+Inside our ```Character``` class, create a function called ```keyboard_handler```.  This function will be called by the ```Board``` every time a key is pressed:
 
     def keyboard_handler(self, symbol, modifier):
         if symbol == key.UP:
@@ -211,7 +211,7 @@ The ```symbol``` argument is the character code of the key that was pressed.  Th
 
 Also note that we're using ```self.board``` to refer to the game board instead of the ```GAME_BOARD``` variable.  Every ```GameElement``` has a link to the game board set at ```.board```.  By using that, we avoid using global variables and our code is more portable (say our Class starts to get really big and we want to move it to its own file).
 
-Try adding a message for each direction key on the keyboard, ie: down, left, right.
+Try adding a message for each direction key on the keyboard, ie: _down_, _left_, _right_.
 
 Step 8: Motion
 --------------
@@ -232,7 +232,7 @@ Add conditions for every direction.
 
 Step 9: Instance methods
 ------------------------
-We're going to simplify things by adding behavior to our character object. In theory, our Character class 'encapsulates' the behavior and data related to characters in our game. In this example, our character knows its own 'x' and 'y' position. Similarly, if we ask it to move in a direction, it should also know what its new position is.
+We're going to simplify things by adding behavior to our character object. In theory, our ```Character``` class 'encapsulates' the behavior and data related to characters in our game. In this example, our character knows its own 'x' and 'y' position. Similarly, if we ask it to move in a direction, it should also know what its new position is.
 
     print (player.x, player.y)
     => (1, 1)
@@ -242,7 +242,7 @@ We're going to simplify things by adding behavior to our character object. In th
     => (1, 1)
 
 Note that finding out what the next position is does not actually move the player we do that manually.
-We add an instance method to our Character class like so:
+We add an instance method to our ```Character``` class like so:
 
     class Character(GameElement):
         IMAGE = "Girl"
@@ -258,7 +258,7 @@ We add an instance method to our Character class like so:
                 return (self.x+1, self.y)
             return None
 
-Note the unusual parameter 'self' that seems to disappear when we call it:
+Note the unusual parameter ```self``` that seems to disappear when we call it:
 
     def next_pos(self, direction):
 
@@ -266,9 +266,9 @@ Note the unusual parameter 'self' that seems to disappear when we call it:
 
     player.next_pos("up")
 
-An instance method can be thought of as being _inside_ a particular instance. From inside that instance, the method needs a variable to refer to the instance it's inside of, thus the 'self' parameter.
+An instance method can be thought of as being _inside_ a particular instance. From inside that instance, the method needs a variable to refer to the instance it's inside of, thus the ```self``` parameter.
 
-Update your keyboard handler to use the new .next\_pos() method. We first decide which direction the player is trying to move by checking the keyboard with a big if statement
+Update your keyboard handler to use the new ```.next_pos()``` method. We first decide which direction the player is trying to move by checking the keyboard with a big ```if``` statement
 
     direction = None
     if symbol == key.UP:
@@ -280,7 +280,7 @@ Update your keyboard handler to use the new .next\_pos() method. We first decide
     elif symbol == key.RIGHT:
         direction = "right"
 
-Then we feed the direction to next\_pos to find out the location the player is trying to move to.
+Then we feed the direction to ```next_pos``` to find out the location the player is trying to move to.
 
     if direction:
         next_location = self.next_pos(direction)
@@ -337,7 +337,7 @@ Step 10: Rock Solid
 -------------------
 Whoah, we just walked through that boulder. Not only that, but we _ate_ it, as well. That's no good. We need some way to interact with the boulder. Or, more specifically, prevent us from interacting with it.
 
-The first thing to do is look before we move. This means, after determining our next position, checking the board to see if there's anything already there. We can use the .get\_el method on our board. In our ```keyboard_handler``` method:
+The first thing to do is look before we move. This means, after determining our next position, checking the board to see if there's anything already there. We can use the ```.get_el``` method on our board. In our ```keyboard_handler``` method:
 
     if direction:
         next_location = self.next_pos(direction)
@@ -348,15 +348,15 @@ The first thing to do is look before we move. This means, after determining our 
             existing_el = self.board.get_el(next_x, next_y)
 
 
-Now, we could just see if the existing\_el is an object of type Rock by using the isinstance() function. But what if there are other things that aren't rocks that we don't want to walk through? We need a more general way to do this.
+Now, we could just see if the ```existing_el``` is an object of type ```Rock``` by using the ```isinstance()``` function. But what if there are other things that aren't rocks that we don't want to walk through? We need a more general way to do this.
 
-We can make this 'walkability' an intrinsic property of all Rocks by adding a new 'class attribute' to the Rock class.
+We can make this 'walkability' an intrinsic property of all ```Rocks``` by adding a new 'class attribute' to the ```Rock``` class.
 
     class Rock(GameElement):
         IMAGE = "Rock"
         SOLID = True
 
-Now, every instance of Rock will have the attribute 'SOLID' set to true. Interestingly, we can have the unusual behavior of setting individual Rocks to not be solid at our discretion.
+Now, every instance of ```Rock``` will have the attribute ```SOLID``` set to true. Interestingly, we can have the unusual behavior of setting individual Rocks to not be solid at our discretion.
 
 Instead of checking whether or not the existing element we're about to walk over is a rock, we can just check whether or not it's solid:
 
@@ -385,7 +385,7 @@ All together:
 
 Step 11: It's a trap!
 ---------------------
-Uh-oh, we're trapped! We're surrounded by four solid rocks! Remember what we said when we could modify individual rocks and override the class attribute? Let's do that now. We can take a particular rock instance and change its solidity. In our initialize function, after we create and register our rocks, let's change the bottom-most one to be intangible. We can access the last rock in our list and change the .SOLID attribute. In our initialize method:
+Uh-oh, we're trapped! We're surrounded by four solid rocks! Remember what we said when we could modify individual rocks and override the class attribute? Let's do that now. We can take a particular rock instance and change its solidity. In our ```initialize``` function, after we create and register our rocks, let's change the bottom-most one to be intangible. We can access the last rock in our list and change the ```.SOLID``` attribute. In our ```initialize``` method:
 
     for pos in rock_positions:
         rock = Rock()
@@ -403,7 +403,7 @@ Woo, we can move around. That's awesome. But our game is still kinda boring. Let
         IMAGE = "BlueGem"
         SOLID = False
 
-Register and set the gem at (3,1) in your initialize function, as before.
+Register and set the gem at (3,1) in your ```initialize``` function, as before.
 
     GAME_BOARD.draw_msg("This game is wicked awesome.") 
     # Add these lines
@@ -415,13 +415,13 @@ One thing to remember is that the name of our classes isn't really important. We
 
     class ShinyBauble(GameElement):
 
-The important thing about the class definition is that we properly inherit from the GameElement class so that they behave properly in our game.
+The important thing about the class definition is that we properly inherit from the ```GameElement``` class so that they behave properly in our game.
 
 Step 13: Remembering things that happened
 -----------------------------------------
-When we walk over our gem, it simply disappears. We need a way to remember that we've acquired an item, so we add state to our player characters. In game parlance, we can say that our character has an inventory. This is a property of a particular character, our game character. Given that we might have multiple characters later, we make the inventory an instance attribute of our Character class.
+When we walk over our gem, it simply disappears. We need a way to remember that we've acquired an item, so we add state to our player characters. In game parlance, we can say that our character has an inventory. This is a property of a particular character, our game character. Given that we might have multiple characters later, we make the inventory an instance attribute of our ```Character``` class.
 
-To do this, we need to add an initializer to say that when we create a Character, it starts with an empty inventory. Our inventory can be a simple list of objects our character is carrying.
+To do this, we need to add an initializer to say that when we create a ```Character```, it starts with an empty inventory. Our inventory can be a simple list of objects our character is carrying.
 
 In the ```Character``` class, add:
 
@@ -441,18 +441,18 @@ Next, we need a way for our player to 'interact' with an object. In fact, we wan
     if existing_el:
         existing_el.interact(self)
 
-Now, whenever the player tries to bump into an object, our character will try to interact with it first. The default behavior for interaction is to do nothing. This is defined on the ```GameElement``` class. We want to override the behavior when a player interacts with a Gem. We want that gem to be added to the player's inventory. It will take the following format:
+Now, whenever the player tries to bump into an object, our character will try to interact with it first. The default behavior for interaction is to do nothing. This is defined on the ```GameElement``` class. We want to override the behavior when a player interacts with a ```Gem```. We want that gem to be added to the player's inventory. It will take the following format:
 
     player.inventory.append(gem)
 
-To do that, we modify the Gem class and add the ```interact``` method. Whenever the gem interacts with a player, it gets added to their inventory and a message displays:
+To do that, we modify the ```Gem``` class and add the ```interact``` method. Whenever the gem interacts with a player, it gets added to their inventory and a message displays:
 
     class Gem(GameElement):
         def interact(self, player):
             player.inventory.append(self)
             GAME_BOARD.draw_msg("You just acquired a gem! You have %d items!"%(len(player.inventory)))
 
-(Our game is getting quite big, if you can't figure out where to add these lines, check the reference implementation in game\_ref.py.)
+(Our game is getting quite big, if you can't figure out where to add these lines, check the reference implementation in ```game_ref.py```.)
 
 Experiment with adding different gems that have different interaction behaviors. For example, you could print different messages, or maybe touching a certain type of gem resets the user position to the starting point.
 
