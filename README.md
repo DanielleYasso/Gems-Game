@@ -18,7 +18,7 @@ We'll be editing **only** the code in ```game.py```. To run the game type ```pyt
 
 Step 1: Let's add something to the game
 ----------------------------------------
-The first thing we're going to do is add boulders to our game. First, we need to _define_ what a boulder is. We create a class definition as follows:
+The first thing we're going to do is add boulders to our game. First, we need to _define_ what a boulder is. We create a class definition in ```game.py``` as follows:
 
     class Rock(GameElement):
         IMAGE = "Rock"
@@ -33,7 +33,7 @@ The next thing we need to do is to actually create a single rock and place it on
 
 Simply calling the class as if it were a function creates a new rock for us to use. Here, we assign it to the variable 'rock'.
 
-As a quirk of this particular game engine we've written, we have to register this rock with the game board so that it displays. We do that by calling GAME\_BOARD.register(). After that, the rock can then be placed on the board with the GAME\_BOARD.set\_el() method. For the purposes of this exercise, when we place objects on our game board, we put the code in the initialize() function. The full code for that looks like this. 
+As a quirk of this particular game engine we've written, we have to register this rock with the game board so that it displays. We do that by calling ```GAME_BOARD.register()```. After that, the rock can then be placed on the board with the ```GAME_BOARD.set\_el()``` method. For the purposes of this exercise, when we place objects on our game board, we put the code in the ```initialize()``` function. The full code for that looks like this. 
 
 **DO NOT COPY/PASTE PLZ**
 
@@ -44,9 +44,9 @@ As a quirk of this particular game engine we've written, we have to register thi
         GAME_BOARD.set_el(1, 1, rock)
         print "The rock is at", (rock.x, rock.y)
 
-The set\_el function takes in three elements, the x position, the y position, and the element you're placing at that position. If you imagine the game board as a grid, the top-left position is 0,0, and the bottom right is 2,2.
+The ```set_el``` function takes in three elements, the x position, the y position, and the element you're placing at that position. If you imagine the game board as a grid, the top-left position is 0,0, and the bottom right is 2,2.
 
-Try changing the position and see how the rock moves around. Notice the ouput of the print statement here.
+Try changing the position and see how the rock moves around. Notice the ouput of the print statement here.  You never set ```rock.x```, can you figure how it got set?
 
 Step 2: Increase the board size
 -------------------------------
@@ -187,11 +187,11 @@ Our game Board knows how to draw GameElements, so anything that is a GameElement
     GAME_BOARD.register(rock)
     GAME_BOARD.set_el(1, 2, rock)
 
-But now we want to create our Character.  Our Character is a "smarter" GameElement.  It can move.  A Rock can't move, so no sense in putting that code in the Rock class.  It also doesn't make sense to put that code in the GameElement class, since not every object on our board can move.  Also, what does it mean to move?  In this case, our character is going to move one space when an arrow key is pressed.  Our Character will know what it means to move so our code to handle the movement should be placed in our Character class.
+But now we want to create our Character.  Our Character is a "smarter" GameElement.  It can move.  A Rock can't move, so no sense in putting code to handle movement in the Rock class.  It also doesn't make sense to put that code in the GameElement class, since not every object on our board can move.  Also, what does it mean to move?  For our character it means move one space when an arrow key is pressed.  Maybe we'll want different types of characters, maybe some that can move two spaces.  Our Character will know what it means to move so our code to handle movement should be placed in our ```Character``` class.
 
 Now it's time to make our game interactive by adding keyboard capabilities.
 
-The thing to note about they keyboard here is that we can no longer use the raw\_input function we've been using until now. When building a game, we can't expect our user to hit enter every time they press a key. Instead, we read the _state_ of the keyboard directly.
+The thing to note about they keyboard here is that we can no longer use the ```raw_input``` function we've been using in previous exercises. When building a game, we can't expect our user to hit enter every time they press a key. Instead, we need to be notified when a key is pressed.
 
 Up until now, we've thought of the keyboard as a source of input that feeds us characters one at a time in a stream. Another way to think of the keyboard is as an "event" that occurs when a key is pressed.
 
@@ -199,15 +199,17 @@ Our game engine activates the keyboard in this second manner, and we just need t
 
 Because our game engine spends a lot of time dealing with graphics, we have to give it control of our main loop. Otherwise, we'd have to draw everything ourselves.  Any object that is on our board can be made aware that an event (like a key being pressed) has happened, but only objects that actually care about that event need to have a handler.
 
-Inside our Character class, create a function called keyboard\_handler.  This function will be called by the Board every time a key is pressed:
+Inside our Character class, create a function called ```keyboard_handler```.  This function will be called by the Board every time a key is pressed:
 
     def keyboard_handler(self, symbol, modifier):
         if symbol == key.UP:
-            GAME_BOARD.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
+            self.board.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
         elif symbol == key.SPACE:
-            GAME_BOARD.erase_msg()
+            self.board.erase_msg()
 
 The ```symbol``` argument is the character code of the key that was pressed.  The ```key``` module contains friendly mappings of those codes to the symbol numbers.  (It's much nicer to write ```if symbol == key.UP:``` instead of ```if symbol == 65362:```).  Modifier lets you know if a modifier key (Shift, Ctrl, Alt) was also pressed at the same time at the same time.
+
+Also note that we're using ```self.board``` to refer to the game board instead of the ```GAME_BOARD``` variable.  Every ```GameElement``` has a link to the game board set at ```.board```.  By using that, we avoid using global variables and our code is more portable (say our Class starts to get really big and we want to move it to its own file).
 
 Try adding a message for each direction key on the keyboard, ie: down, left, right.
 
@@ -221,10 +223,10 @@ The implementation looks like this:
 
     def keyboard_handler(self, symbol, modifier):
         if symbol == key.UP:
-            GAME_BOARD.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
+            self.board.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
             next_y = self.y - 1
-            GAME_BOARD.del_el(self.x, self.y)
-            GAME_BOARD.set_el(self.x, next_y, self)
+            self.board.del_el(self.x, self.y)
+            self.board.set_el(self.x, next_y, self)
 
 Add conditions for every direction.
 
@@ -287,8 +289,8 @@ Then we feed the direction to next\_pos to find out the location the player is t
 
 Lastly, we move the player to the new location by deleting them from their old position and re-setting them in their new position:
 
-    GAME_BOARD.del_el(self.x, self.y)
-    GAME_BOARD.set_el(next_x, next_y, self)
+    self.board.del_el(self.x, self.y)
+    self.board.set_el(next_x, next_y, self)
 
 All together, it looks like this:
 
@@ -307,7 +309,6 @@ All together, it looks like this:
             return None
 
         def keyboard_handler(self, symbol, modifier):
-            print "[%s] pressed %s" %(self.IMAGE, symbol)
 
             direction = None
             if symbol == key.UP:
@@ -319,14 +320,16 @@ All together, it looks like this:
             elif symbol == key.RIGHT:
                 direction = "right"
 
+            self.board.draw_msg("[%s] moves %s" % (self.IMAGE, direction))
+
             if direction:
                 next_location = self.next_pos(direction)
 
                 if next_location:
                     next_x = next_location[0]
                     next_y = next_location[1]
-                    GAME_BOARD.del_el(self.x, self.y)
-                    GAME_BOARD.set_el(next_x, next_y, self)
+                    self.board.del_el(self.x, self.y)
+                    self.board.set_el(next_x, next_y, self)
 
 Run the program and see how these changes affect the game.
 
@@ -334,7 +337,7 @@ Step 10: Rock Solid
 -------------------
 Whoah, we just walked through that boulder. Not only that, but we _ate_ it, as well. That's no good. We need some way to interact with the boulder. Or, more specifically, prevent us from interacting with it.
 
-The first thing to do is look before we move. This means, after determining our next position, checking the board to see if there's anything already there. We can use the .get\_el method on our board. In our keyboard\_handler method:
+The first thing to do is look before we move. This means, after determining our next position, checking the board to see if there's anything already there. We can use the .get\_el method on our board. In our ```keyboard_handler``` method:
 
     if direction:
         next_location = self.next_pos(direction)
@@ -342,7 +345,7 @@ The first thing to do is look before we move. This means, after determining our 
             next_x = next_location[0]
             next_y = next_location[1]
 
-            existing_el = GAME_BOARD.get_el(next_x, next_y)
+            existing_el = self.board.get_el(next_x, next_y)
 
 
 Now, we could just see if the existing\_el is an object of type Rock by using the isinstance() function. But what if there are other things that aren't rocks that we don't want to walk through? We need a more general way to do this.
@@ -358,11 +361,10 @@ Now, every instance of Rock will have the attribute 'SOLID' set to true. Interes
 Instead of checking whether or not the existing element we're about to walk over is a rock, we can just check whether or not it's solid:
 
     if existing_el and existing_el.SOLID:
-        GAME_BOARD.draw_msg("There's something in my way!")
+        self.board.draw_msg("There's something in my way!")
     elif existing_el is None or not existing_el.SOLID:
-        GAME_BOARD.erase_msg()
-        GAME_BOARD.del_el(self.x, self.y)
-        GAME_BOARD.set_el(next_x, next_y, self)
+        self.board.del_el(self.x, self.y)
+        self.board.set_el(next_x, next_y, self)
 
 All together:
 
@@ -372,14 +374,13 @@ All together:
             next_x = next_location[0]
             next_y = next_location[1]
 
-            existing_el = GAME_BOARD.get_el(next_x, next_y)
+            existing_el = self.board.get_el(next_x, next_y)
 
             if existing_el and existing_el.SOLID:
-                GAME_BOARD.draw_msg("There's something in my way!")
+                self.board.draw_msg("There's something in my way!")
             elif existing_el is None or not existing_el.SOLID:
-                GAME_BOARD.erase_msg()
-                GAME_BOARD.del_el(self.x, self.y)
-                GAME_BOARD.set_el(next_x, next_y, self)
+                self.board.del_el(self.x, self.y)
+                self.board.set_el(next_x, next_y, self)
 
 
 Step 11: It's a trap!
@@ -422,7 +423,7 @@ When we walk over our gem, it simply disappears. We need a way to remember that 
 
 To do this, we need to add an initializer to say that when we create a Character, it starts with an empty inventory. Our inventory can be a simple list of objects our character is carrying.
 
-In the Character class, add:
+In the ```Character``` class, add:
 
     def __init__(self):
         GameElement.__init__(self)
@@ -430,21 +431,21 @@ In the Character class, add:
 
 This is an initializer. It "sets up" our object with initial values. Here, we're telling the character that it must have an empty list as an inventory to start. 
 
-Notice the line, 'GameElement.\_\_init\_\_(self)'. To be a proper game element, there was some behavior defined on the GameElement class to interact with the board correctly. When we add an initializer to our class, we need to tell our class that it still needs to do those things, so we call the parent class' initializer.
+Notice the line, ```GameElement.__init__(self)```. To be a proper game element, there was some behavior defined on the ```GameElement``` class to interact with the board correctly. When we add an initializer to our class, we need to tell our class that it still needs to do those things, so we call the parent class' initializer.
 
-Next, we need a way for our player to 'interact' with an object. In fact, we want the player to interact with pretty much every object on the board. Most of the time, the interactions won't produce anything, but we do it anyway. In the keyboard\_handler:
+Next, we need a way for our player to 'interact' with an object. In fact, we want the player to interact with pretty much every object on the board. Most of the time, the interactions won't produce anything, but we do it anyway. In the ```keyboard_handler```:
 
-    existing_el = GAME_BOARD.get_el(next_x, next_y)
+    existing_el = self.board.get_el(next_x, next_y)
     # Add after this line
 
     if existing_el:
         existing_el.interact(self)
 
-Now, whenever the player tries to bump into an object, our character will try to interact with it first. The default behavior for interaction is to do nothing. This is defined on the GameElement class. We want to override the behavior when a player interacts with a Gem. We want that gem to be added to the player's inventory. It will take the following format:
+Now, whenever the player tries to bump into an object, our character will try to interact with it first. The default behavior for interaction is to do nothing. This is defined on the ```GameElement``` class. We want to override the behavior when a player interacts with a Gem. We want that gem to be added to the player's inventory. It will take the following format:
 
     player.inventory.append(gem)
 
-To do that, we modify the Gem class and add the 'interact' method. Whenever the gem interacts with a player, it gets added to their inventory and a message displays:
+To do that, we modify the Gem class and add the ```interact``` method. Whenever the gem interacts with a player, it gets added to their inventory and a message displays:
 
     class Gem(GameElement):
         def interact(self, player):
@@ -457,7 +458,7 @@ Experiment with adding different gems that have different interaction behaviors.
 
 Step 14: Get Clever, Have Fun
 -----------------------------
-Congratulations, you have a game. Sort of. It's not all that interesting, and it definitely could be better. You can spend some time looking at engine.py to see how it all works (be careful, there be dragons down there). You *might* even need to edit engine.py in order to do some of the fancier things you want to do. Be careful and test as you go!
+Congratulations, you have a game. Sort of. It's not all that interesting, and it definitely could be better. You can spend some time looking at ```engine.py``` to see how it all works (be careful, there be dragons there). You *might* even need to edit ```engine.py``` in order to do some of the fancier things you want to do. Be careful and test as you go!
 
 More interestingly, spend some time playing with object interactions, adding more objects and classes to your game, and fixing some bugs. Here are some ideas:
 
@@ -500,4 +501,4 @@ Ok, have some [hints](HINTS.md).
 Ok, but beware ... it (may or may not be) straightforward. [Here's some tips for getting it set up on Mac OSX.](https://github.com/hackbrightacademy/oop_lesson/wiki)
 
 ### Licensing
-The material presented here is copyrighted by Hackbright Academy, and is part of our fellowship program curriculum. It is currently free for personal use.
+The material presented here is copyrighted by [Hackbright Academy](http://www.hackbrightacademy.com/), and is part of our fellowship program curriculum. It is currently free for personal use.

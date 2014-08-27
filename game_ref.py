@@ -67,20 +67,20 @@ class Character(GameElement):
                 next_x = next_location[0]
                 next_y = next_location[1]
 
-                existing_el = GAME_BOARD.get_el(next_x, next_y)
+                existing_el = self.board.get_el(next_x, next_y)
 
                 message = ""
                 if existing_el:
                     message = existing_el.interact(self)
 
                 if message:
-                    GAME_BOARD.draw_msg(message)
+                    self.board.draw_msg(message)
                 else:
-                    GAME_BOARD.erase_msg()
+                    self.board.erase_msg()
 
                 if existing_el is None or not existing_el.SOLID:
-                    GAME_BOARD.del_el(self.x, self.y)
-                    GAME_BOARD.set_el(next_x, next_y, self)
+                    self.board.del_el(self.x, self.y)
+                    self.board.set_el(next_x, next_y, self)
 
 pass
 ####   End class definitions    ####
