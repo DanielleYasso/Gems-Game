@@ -15,6 +15,7 @@ GAME_HEIGHT = 5
 #### Put class definitions here ####
 class Rock(GameElement):
     IMAGE = "Rock"
+    SOLID = True    
 
 class Character(GameElement):
     IMAGE = "Princess"
@@ -56,8 +57,17 @@ class Character(GameElement):
 
             if next_location:
                 next_x, next_y = next_location
-                self.board.del_el(self.x, self.y)
-                self.board.set_el(next_x, next_y, self)
+
+                existing_el = self.board.get_el(next_x, next_y)
+
+                if existing_el and existing_el.SOLID:
+                    self.board.draw_msg("You got rock blocked")
+                elif existing_el is None or not existing_el.SOLID:
+                    self.board.del_el(self.x, self.y)
+                    self.board.set_el(next_x, next_y, self)
+
+
+
 
 
 
