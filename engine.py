@@ -6,8 +6,8 @@ from core import GameElement
 from board import Board
 
 
-SCREEN_X = 900
-SCREEN_Y = 800
+SCREEN_X = 1000
+SCREEN_Y = 900
 
 game_window = pyglet.window.Window(SCREEN_X, SCREEN_Y)
 board = None
@@ -29,11 +29,13 @@ def setup_images():
             "Block": "Plain Block.png",
             "GrassBlock": "Grass Block.png",
             "StoneBlock": "Stone Block.png",
+            "StoneBlockTall": "Stone Block Tall.png",
             "WaterBlock": "Water Block.png",
             "WoodBlock": "Wood Block.png",
             "ShortTree": "Tree Short.png",
             "TallTree": "Tree Tall.png",
-            "Rock": "therock.png",
+            "Rock": "Rock.png",
+            "Dwayne": "therock.png",
             "Chest": "Chest Closed.png",
             "ChestOpen": "Chest Open.png",
             "RampEast": "Ramp East.png",
@@ -51,7 +53,8 @@ def setup_images():
             "Cat": "Character Cat Girl.png",
             "Horns": "Character Horn Girl.png",
             "Girl": "Character Pink Girl.png",
-            "Princess": "Character Princess Girl.png"
+            "Princess": "Character Princess Girl.png",
+            "GoldTile": "GoldTile.png",
             }
 
     for k,v in filenames.items():

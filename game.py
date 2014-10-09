@@ -11,8 +11,8 @@ GAME_BOARD = None
 DEBUG = False
 ######################
 
-GAME_WIDTH = 8
-GAME_HEIGHT = 8
+GAME_WIDTH = 9
+GAME_HEIGHT = 9
 
 #### Put class definitions here ####
 class Gem(GameElement):
@@ -49,7 +49,9 @@ class Rock(GameElement):
     SOLID = True  
 
     def interact(self, zelda):
-        self.board.draw_msg("You got rock blocked")    
+        self.change_image("Dwayne")
+        self.board.draw_msg("You got rock blocked")  
+
 
     def __init__(self, position):
         self.position = position
@@ -60,7 +62,6 @@ class Rock(GameElement):
 
 class Character(GameElement):
     IMAGE = "Princess"
-    position = (2,2)
     inventory = []
 
     def next_pos(self, direction):
@@ -109,14 +110,22 @@ class Character(GameElement):
                     if existing_el:
                         existing_el.interact(self) 
 
-                    if existing_el is None or not existing_el.SOLID:
+
+                    if self.board.base_board[next_y][next_x] == "WaterBlock":
+                        self.board.draw_msg("Can't walk on water")
+                    elif  existing_el is None or not existing_el.SOLID:
+                        # self.board.del_el(next_x, next_y) # delete item there already
                         self.update_pos(next_x, next_y)
                 except IndexError:
                     self.board.draw_msg("Where do you think you're going fool?")
 
 
-    def __init__(self):
+    def __init__(self, position):
         GameElement.__init__(self)
+        self.position = position
+        x_coord, y_coord = position
+        GAME_BOARD.register(self)
+        GAME_BOARD.set_el(x_coord, y_coord, self)
 
 ####   End class definitions    ####
 
@@ -124,6 +133,8 @@ def reset_piece_to_start(self):
     self.board.del_el(self.x, self.y)
     x_coord, y_coord = self.position
     GAME_BOARD.set_el(x_coord, y_coord, self)
+    if self.IMAGE == "Dwayne":
+        self.change_image("Rock")
 
 def random_rock_not_solid():
     for dwayne in dwayne_johnsons:
@@ -135,17 +146,11 @@ def initialize():
     global starting_board_pieces
     starting_board_pieces = []
 
-    global current_board_pieces
-    current_board_pieces = {}
-
-        current_board_pieces[self.position] = self
-
-
     dwayne_johnson_positions = [
-        (2,1),
-        (1,2),
-        (3,2),
-        (2,3)
+        (4,3),
+        (3,4),
+        (5,4),
+        (4,5)
         ]
     
     global dwayne_johnsons
@@ -158,12 +163,11 @@ def initialize():
 
     random_rock_not_solid()
 
-    zelda = Character()
-    GAME_BOARD.register(zelda)
-    GAME_BOARD.set_el(2,2, zelda)
+    zelda = Character((4,4))
     starting_board_pieces.append(zelda)
 
-    blue_gem = Gem((3,1))
-    green_gem = Gem((4,4), "GreenGem")
+    blue_gem = Gem((5,2))
+    green_gem = Gem((8,6), "GreenGem")
     orange_gem = OrangeGem((0,0))
+    key_gem = Gem((2,6), "Key")
     starting_board_pieces.extend([blue_gem, green_gem, orange_gem])
