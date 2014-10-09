@@ -59,6 +59,23 @@ class Rock(GameElement):
         GAME_BOARD.register(self)
         GAME_BOARD.set_el(x_coord, y_coord, self)
 
+class Hinged(GameElement):
+    SOLID = True
+
+    def interact(self, zelda):
+        for item in zelda.inventory:
+            if item.IMAGE == "Key":
+                self.SOLID = False
+                return
+        GAME_BOARD.draw_msg("You need a key to get through me")
+
+    def __init__(self, position, furniture="DoorClosed"):
+        self.IMAGE = furniture
+        GAME_BOARD.register(self)
+        self.position = position
+        x_coord, y_coord = position
+        GAME_BOARD.set_el(x_coord, y_coord, self)
+
 
 class Character(GameElement):
     IMAGE = "Princess"
@@ -107,6 +124,7 @@ class Character(GameElement):
                 next_x, next_y = next_location
                 try:
                     existing_el = self.board.get_el(next_x, next_y)
+
                     if existing_el:
                         existing_el.interact(self) 
 
@@ -134,7 +152,10 @@ def reset_piece_to_start(self):
     x_coord, y_coord = self.position
     GAME_BOARD.set_el(x_coord, y_coord, self)
     if self.IMAGE == "Dwayne":
+        self.IMAGE = "Rock"
         self.change_image("Rock")
+    if self.IMAGE == "DoorClosed":
+        self.SOLID = True
 
 def random_rock_not_solid():
     for dwayne in dwayne_johnsons:
@@ -166,8 +187,10 @@ def initialize():
     zelda = Character((4,4))
     starting_board_pieces.append(zelda)
 
+    door = Hinged((2,2))
+
     blue_gem = Gem((5,2))
     green_gem = Gem((8,6), "GreenGem")
     orange_gem = OrangeGem((0,0))
     key_gem = Gem((2,6), "Key")
-    starting_board_pieces.extend([blue_gem, green_gem, orange_gem])
+    starting_board_pieces.extend([blue_gem, green_gem, orange_gem, key_gem, door])

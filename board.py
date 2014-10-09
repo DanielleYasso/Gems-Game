@@ -46,10 +46,10 @@ class Board(object):
             if i == 0 or i == self.height-1:
                 # On the boundaries
                 game_map.append(["GoldTile"] * self.width)
-            elif i == 3:
-                row = ["GoldTile"] + ["StoneBlock"] + (["GrassBlock"] * inner_width) + ["WaterBlock"] + ["GoldTile"]
+            elif i == 1:
+                row = ["GoldTile"] + ["WaterBlock"] + ["StoneBlock"] + (["WaterBlock"] * (self.width-4)) + ["GoldTile"]
                 game_map.append(row)
-            elif i == 1 or i == self.height-2:
+            elif i == self.height-2:
                 row = ["GoldTile"] + (["WaterBlock"] * (self.width-2)) + ["GoldTile"]
                 game_map.append(row)
             else:
