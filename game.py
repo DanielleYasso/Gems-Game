@@ -13,12 +13,21 @@ GAME_WIDTH = 5
 GAME_HEIGHT = 5
 
 #### Put class definitions here ####
+class Gem(GameElement):
+    IMAGE = "BlueGem"
+    SOLID = False
+
+    def interact(self, zelda):
+        zelda.inventory.append(self)
+        GAME_BOARD.draw_msg("You rich bitch! You so fancy. You have %d status symbols" % len(zelda.inventory))
+
 class Rock(GameElement):
     IMAGE = "Rock"
     SOLID = True    
 
 class Character(GameElement):
     IMAGE = "Princess"
+    # inventory = []
 
     def next_pos(self, direction):
         if direction == "up":
@@ -57,17 +66,23 @@ class Character(GameElement):
 
             if next_location:
                 next_x, next_y = next_location
+                try:
+                    existing_el = self.board.get_el(next_x, next_y)
+                    if existing_el:
+                        existing_el.interact(self)
 
-                existing_el = self.board.get_el(next_x, next_y)
+                    if existing_el and existing_el.SOLID:
+                        self.board.draw_msg("You got rock blocked")
+                    elif existing_el is None or not existing_el.SOLID:
+                        self.board.del_el(self.x, self.y)
+                        self.board.set_el(next_x, next_y, self)
+                except IndexError:
+                    self.board.draw_msg("Where do you think you're going fool?")
 
-                if existing_el and existing_el.SOLID:
-                    self.board.draw_msg("You got rock blocked")
-                elif existing_el is None or not existing_el.SOLID:
-                    self.board.del_el(self.x, self.y)
-                    self.board.set_el(next_x, next_y, self)
 
-
-
+    def __init__(self):
+        GameElement.__init__(self)
+        self.inventory = []
 
 
 
@@ -93,6 +108,8 @@ def initialize():
         GAME_BOARD.set_el(pos[0], pos[1], dwayne)
         dwayne_johnsons.append(dwayne)
 
+    dwayne_johnsons[-1].SOLID = False
+
     for dwayne in dwayne_johnsons:
         print dwayne
 
@@ -100,3 +117,7 @@ def initialize():
     GAME_BOARD.register(zelda)
     GAME_BOARD.set_el(2,2, zelda)
     print zelda
+
+    gem = Gem()
+    GAME_BOARD.register(gem)
+    GAME_BOARD.set_el(3, 1, gem)
