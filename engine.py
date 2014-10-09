@@ -32,7 +32,7 @@ def setup_images():
             "WoodBlock": "Wood Block.png",
             "ShortTree": "Tree Short.png",
             "TallTree": "Tree Tall.png",
-            "Rock": "Rock.png",
+            "Rock": "therock.png",
             "Chest": "Chest Closed.png",
             "DoorClosed": "Door Tall Closed.png",
             "DoorOpen": "Door Tall Open.png",
