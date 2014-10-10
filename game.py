@@ -21,6 +21,11 @@ class Gem(GameElement):
     def interact(self, zelda):
         zelda.inventory.append(self)
         GAME_BOARD.draw_msg("You rich bitch! You so fancy. You have %d status symbols" % len(zelda.inventory))
+        
+        if len(zelda.inventory) == 4:
+            GAME_BOARD.draw_msg("level up!")
+            zelda.IMAGE = "Princess"
+            zelda.change_image("Princess")
 
     def __init__(self, position, gem_color="BlueGem"):
         self.IMAGE = gem_color
@@ -28,6 +33,16 @@ class Gem(GameElement):
         self.position = position
         x_coord, y_coord = position
         GAME_BOARD.set_el(x_coord,y_coord,self)
+
+class Key(Gem):
+    IMAGE = "Key"
+    
+    def interact(self, zelda):
+        zelda.has_key = True
+        GAME_BOARD.draw_msg("You got the key!")
+
+    def __init__(self, position):
+        return super(Key, self).__init__(position, self.IMAGE)
 
 class OrangeGem(Gem):
     IMAGE = "OrangeGem"
@@ -63,10 +78,9 @@ class Hinged(GameElement):
     SOLID = True
 
     def interact(self, zelda):
-        for item in zelda.inventory:
-            if item.IMAGE == "Key":
-                self.SOLID = False
-                return
+        if zelda.has_key:
+            self.SOLID = False
+            return
         GAME_BOARD.draw_msg("You need a key to get through me")
 
     def __init__(self, position, furniture="DoorClosed"):
@@ -78,8 +92,9 @@ class Hinged(GameElement):
 
 
 class Character(GameElement):
-    IMAGE = "Princess"
+    IMAGE = "Horns"
     inventory = []
+    has_key = False
 
     def next_pos(self, direction):
         if direction == "up":
@@ -98,7 +113,7 @@ class Character(GameElement):
 
     def keyboard_handler(self, symbol, modifier):
         direction = None
-        direction_message = "I'm a Princess!"
+        direction_message = "I'm a Princess at heart!!"
 
         if symbol == key.UP:
             direction_message = "Upsee dwaynzee"
@@ -156,6 +171,10 @@ def reset_piece_to_start(self):
         self.change_image("Rock")
     if self.IMAGE == "DoorClosed":
         self.SOLID = True
+    if self.IMAGE == "Horns" or self.IMAGE == "Princess":
+        self.has_key = False
+        self.IMAGE = "Horns"
+        self.change_image("Horns")
 
 def random_rock_not_solid():
     for dwayne in dwayne_johnsons:
@@ -191,6 +210,8 @@ def initialize():
 
     blue_gem = Gem((5,2))
     green_gem = Gem((8,6), "GreenGem")
+    blue_gem2 = Gem((0,5))
+    green_gem2 = Gem((7,0), "GreenGem")
     orange_gem = OrangeGem((0,0))
-    key_gem = Gem((2,6), "Key")
-    starting_board_pieces.extend([blue_gem, green_gem, orange_gem, key_gem, door])
+    key_gem = Key((2,6))
+    starting_board_pieces.extend([blue_gem, green_gem, orange_gem, key_gem, door, blue_gem2, green_gem2])
